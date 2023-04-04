@@ -6,7 +6,9 @@ Bot oficial do BitBunker!
 - Um token do Discord válido.
 
 ## Executando
-- `go run cli/subaru/main.go`
+1. Copie o `.env.example` para `.env`
+2. Configure o `.env` com as informações adequadas.
+3. Rode no terminal: `go run cli/subaru/main.go`
 
 ## Recursos para desenvolvimento
 - [Clique aqui](./DEV_RESOURCES.md)
