@@ -3,7 +3,9 @@ package config
 import "os"
 
 func Load() Subaru {
-	discordToken := os.Getenv("DISCORD_TOKEN")
-	sub := Subaru{discordToken}
+	sub := Subaru{
+		DiscordToken: os.Getenv("DISCORD_TOKEN"),
+		GuildID:      os.Getenv("GUILD_ID"),
+	}
 	return sub
 }
