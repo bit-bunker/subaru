@@ -7,35 +7,37 @@ import (
 
 	"github.com/bit-bunk3r/subaru/pkg/misato"
 	_ "github.com/bit-bunk3r/subaru/pkg/subaru/commands"
-	"github.com/bit-bunk3r/subaru/pkg/subaru/config"
+	"github.com/bit-bunk3r/subaru/pkg/subaru/events"
 	"github.com/bit-bunk3r/subaru/pkg/subaru/sublog"
 	"github.com/bwmarrin/discordgo"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-	config := config.Load()
 
 	sublog.SetDeveplomentLogger()
 	sublog.DiscordGoBindLog()
 
-	dg, err := discordgo.New("Bot " + config.DiscordToken)
+	dg, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 
 	if err != nil {
 		sublog.Logger.Panicf("unable to create client: %v", err)
 	}
 
+	events.Setup(dg)
 	dg.AddHandler(misato.EventHandler)
 	dg.AddHandler(func(s *discordgo.Session, _ *discordgo.Ready) {
 		if len(os.Args) > 1 && os.Args[1] == "--reload-commands" {
 			sublog.Logger.Info("Reloading commands...")
-			misato.RegisterAll(s, config.GuildID)
+			misato.RegisterAll(s, os.Getenv("GUILD_ID"))
 			sublog.Logger.Info("Reloaded!")
 		}
 	})
 
 	dg.Identify.Intents = discordgo.IntentsAll
 	dg.LogLevel = discordgo.LogWarning
+	dg.State.TrackMembers = true
+	dg.Identify.Properties.OS = "android"
 
 	err = dg.Open()
 	if err != nil {
